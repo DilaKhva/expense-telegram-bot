@@ -1,0 +1,6 @@
+.env
+config.py
+expenses.db
+__pycache__
+.venv
+.idea
