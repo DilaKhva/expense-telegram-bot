@@ -7,6 +7,10 @@ A user-friendly Telegram bot for individuals to manage and track their daily exp
 - 📂 **Auto categorization** — AI assigns categories automatically
 - 📅 **Flexible date tracking** — "in january", "yesterday", "last week"
 - 📊 **Stats & charts** — pie charts for any time period
+- ✏️ **Edit & delete** — manage your expenses with inline buttons
+- 📁 **CSV export** — download all expenses for Excel/Google Sheets
+- 💡 **Budget advice** — AI analyzes your history and gives personalized tips
+- 🌐 **Bilingual** — English and Uzbek support
 - 🗑 **Data management** — clear your history anytime
 
 ## Tech Stack
@@ -30,13 +34,16 @@ expense_bot/
 │   ├── models.py          # Table creation
 │   └── db.py              # DB queries
 ├── handlers/
-│   └── ai_handler.py      # Message routing
+│   ├── ai_handler.py      # Main message routing
+│   ├── manage.py          # Edit & delete expenses
+│   └── export.py          # CSV export
 ├── services/
 │   ├── ai_service.py      # Groq AI integration
-│   └── budget.py          # Budget recommendations (coming soon)
+│   └── budget.py          # Budget recommendations
 ├── utils/
-│   └── charts.py          # Chart generation
-├── tests/                 # Tests (coming soon)
+│   ├── charts.py          # Chart generation
+│   └── translations.py    # EN/UZ translations
+├── tests/
 ├── requirements.txt
 ├── .gitignore
 └── README.md
@@ -46,8 +53,8 @@ expense_bot/
 
 1. Clone the repo
 ```bash
-git clone https://github.com/your-username/expense_bot.git
-cd expense_bot
+git clone https://github.com/DilaKhva/expense-telegram-bot.git
+cd expense-telegram-bot
 ```
 
 2. Create and activate virtual environment
@@ -83,6 +90,10 @@ python bot.py
 | "show this week's expenses" | Lists all expenses this week |
 | "stats for january" | Category breakdown for January |
 | "chart for this month" | Pie chart image |
+| "how am I doing?" | AI budget advice based on history |
+| "edit my expenses" | Shows list with edit/delete buttons |
+| "send me the csv" | Downloads all expenses as CSV file |
+| /language | Switch between English and Uzbek |
 | /clear | Deletes all your data |
 
 ## API Keys
