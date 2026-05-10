@@ -44,8 +44,9 @@ def _build_manage_keyboard(expenses, lang: str) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
-async def show_manage_list(message: Message, lang: str):
-    user_id = message.from_user.id
+async def show_manage_list(message: Message, lang: str, user_id: int = None):
+    if user_id is None:
+        user_id = message.from_user.id
     rows = get_recent_expenses(user_id, limit=10)
 
     if not rows:

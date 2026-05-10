@@ -155,7 +155,7 @@ async def quick_export_callback(callback: CallbackQuery):
 async def quick_manage_callback(callback: CallbackQuery):
     lang = get_user_language(callback.from_user.id)
     await callback.answer()
-    await show_manage_list(callback.message, lang)
+    await show_manage_list(callback.message, lang, user_id=callback.from_user.id)
 
 
 @router.callback_query(lambda c: c.data == "quick_language")
@@ -254,7 +254,7 @@ async def ai_message_handler(message: Message):
         await message.answer(advice)
 
     elif intent == "manage":
-        await show_manage_list(message, lang)
+        await show_manage_list(message, lang, user_id=user_id)
 
     elif intent == "export":
         rows = get_all_expenses_csv(user_id)
