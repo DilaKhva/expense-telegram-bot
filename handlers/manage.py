@@ -93,14 +93,26 @@ async def edit_callback(callback: CallbackQuery, state: FSMContext):
 @router.message(EditState.waiting_for_edit)
 async def process_edit(message: Message, state: FSMContext):
     from services.ai_service import analyze_message
+    from services.ai_service import _parse_amount
+    import re
     user_id = message.from_user.id
     lang = get_user_language(user_id)
     data = await state.get_data()
     expense_id = data.get("expense_id")
 
-    # Use AI to parse what user wants to change
-    result = await analyze_message(message.text, lang=lang)
-    edit_data = result.get("data", {})
+    text = message.text.lower().strip()
+
+    # Try to extract amount directly from simple phrases like "40", "amount 40", "not 30 but 40"
+    edit_data = {}
+    numbers = re.findall(r'\b\d+(?:\.\d+)?\b', text)
+    if numbers and any(w in text for w in ["amount", "summa", "price", "cost", "but", "not", "change"]):
+        edit_data["amount"] = _parse_amount(numbers[-1])  # take the last number mentioned
+    elif numbers and len(text.split()) <= 3:  # simple "40" or "40 dollars"
+        edit_data["amount"] = _parse_amount(numbers[0])
+    else:
+        # Fall back to AI
+        result = await analyze_message(message.text, lang=lang)
+        edit_data = result.get("data", {})
 
     update_expense(
         expense_id=expense_id,

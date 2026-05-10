@@ -52,10 +52,11 @@ TEXTS = {
         "deleted": "✅ Expense deleted successfully!",
         "edit_prompt": (
             "✏️ *What do you want to change?*\n\n"
-            "Send me the new details, for example:\n"
-            "• \"change amount to 20\"\n"
-            "• \"change category to Transport\"\n"
-            "• \"change date to March 5\""
+            "Send the new value clearly, for example:\n"
+            "• \"amount 40\"\n"
+            "• \"category Transport\"\n"
+            "• \"date March 5\"\n"
+            "• \"note coffee with friends\""
         ),
         "edit_saved": "✅ *Updated successfully!*\n\n📅 Date: {date}\n💰 Amount: ${amount}\n📂 Category: {category}\n📝 Note: {note}",
         "expense_not_found": "❌ Expense not found.",
@@ -118,10 +119,11 @@ TEXTS = {
         "deleted": "✅ Xarajat muvaffaqiyatli o'chirildi!",
         "edit_prompt": (
             "✏️ *Nimani o'zgartirmoqchisiz?*\n\n"
-            "Yangi ma'lumotlarni yuboring:\n"
-            "• \"summani 20 ga o'zgartir\"\n"
-            "• \"kategoriyani Transportga o'zgartir\"\n"
-            "• \"sanani mart 5 ga o'zgartir\""
+            "Yangi qiymatni aniq yuboring:\n"
+            "• \"summa 40\"\n"
+            "• \"kategoriya Transport\"\n"
+            "• \"sana mart 5\"\n"
+            "• \"izoh do'stlar bilan qahva\""
         ),
         "edit_saved": "✅ *Muvaffaqiyatli yangilandi!*\n\n📅 Sana: {date}\n💰 Summa: ${amount}\n📂 Kategoriya: {category}\n📝 Izoh: {note}",
         "expense_not_found": "❌ Xarajat topilmadi.",
