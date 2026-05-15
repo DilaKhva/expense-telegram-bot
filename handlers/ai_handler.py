@@ -8,7 +8,7 @@ from aiogram.filters import Command
 from datetime import datetime
 
 from services.ai_service import analyze_message
-from database.db import add_expense, get_expenses, get_stats, clear_expenses, get_user_language, set_user_language, get_all_expenses_csv
+from database.db import add_expense, get_expenses, get_stats, clear_expenses, get_user_language, set_user_language, get_all_expenses_csv, find_expense, update_expense, delete_expense
 from utils.charts import generate_pie_chart
 from utils.translations import t
 from handlers.manage import show_manage_list
@@ -252,6 +252,47 @@ async def ai_message_handler(message: Message):
         await message.bot.send_chat_action(message.chat.id, "typing")
         advice = await get_budget_advice(user_id=user_id, lang=lang)
         await message.answer(advice)
+
+    elif intent == "direct_edit":
+        category = data.get("category")
+        date_from = data.get("date_from") or data.get("date")
+        old_amount = data.get("amount")
+        new_amount = data.get("new_amount") or old_amount
+
+        # Try to find the expense
+        row = find_expense(user_id=user_id, category=category, date=date_from)
+        if not row:
+            await message.answer("❌ Couldn't find that expense. Try using the manage button to edit it.")
+            return
+
+        # If user said "change from X to Y", new_amount is in the message
+        import re
+        numbers = re.findall(r'\b\d+(?:\.\d+)?\b', message.text)
+        if len(numbers) >= 2:
+            new_amount = float(numbers[-1])  # last number is the new amount
+        elif len(numbers) == 1:
+            new_amount = float(numbers[0])
+
+        update_expense(expense_id=row["id"], user_id=user_id, amount=new_amount)
+        updated = find_expense(user_id=user_id, category=category, date=date_from)
+        await message.answer(
+            t(lang, "edit_saved",
+              date=_format_date(updated["date"]),
+              amount=f"{updated['amount']:.2f}",
+              category=updated["category"],
+              note=updated["note"] or "—"),
+            parse_mode="Markdown"
+        )
+
+    elif intent == "direct_delete":
+        category = data.get("category")
+        date_from = data.get("date_from") or data.get("date")
+        row = find_expense(user_id=user_id, category=category, date=date_from)
+        if not row:
+            await message.answer("❌ Couldn't find that expense. Try using the manage button to delete it.")
+            return
+        delete_expense(expense_id=row["id"], user_id=user_id)
+        await message.answer(t(lang, "deleted"))
 
     elif intent == "manage":
         await show_manage_list(message, lang, user_id=user_id)

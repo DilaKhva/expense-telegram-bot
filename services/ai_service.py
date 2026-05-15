@@ -12,7 +12,7 @@ Today's date is {today}.
 When the user sends a message, respond ONLY in this JSON format:
 
 {{
-  "intent": "add_expense" | "list_expenses" | "get_stats" | "get_chart" | "export" | "manage" | "budget_advice" | "chat",
+  "intent": "add_expense" | "list_expenses" | "get_stats" | "get_chart" | "export" | "manage" | "direct_edit" | "direct_delete" | "budget_advice" | "chat",
   "data": {{
     "amount": number or null,
     "category": string or null,
@@ -53,7 +53,9 @@ Examples:
 - "chart for this month" -> intent: get_chart, date_from: "{month_start}", date_to: "{today}"
 - "all time stats" -> intent: get_stats, date_from: null, date_to: null
 - "send csv", "export my data", "excel file" -> intent: export
-- "delete expense", "edit expense", "manage expenses" -> intent: manage
+- "show manage list", "edit my expenses", "manage expenses", "delete my expenses" -> intent: manage
+- "change amount X to Y for [category] on [date]", "update [category] expense to X", "fix my transport expense" -> intent: direct_edit (include amount, category, date_from in data)
+- "delete [category] expense on [date]" -> intent: direct_delete (include category, date_from in data)
 - "budget advice", "am I overspending?", "how am I doing?", "give me tips", "save money", "spending advice", "how i was doing", "analyze my spending", "any tips?", "what do you think about my spending" -> intent: budget_advice
 NOTE: "how am I doing" and "how i was doing" ALWAYS = budget_advice, never get_stats
 

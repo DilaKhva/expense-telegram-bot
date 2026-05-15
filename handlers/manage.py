@@ -44,10 +44,15 @@ def _build_manage_keyboard(expenses, lang: str) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(inline_keyboard=buttons)
 
 
-async def show_manage_list(message: Message, lang: str, user_id: int = None):
+async def show_manage_list(message: Message, lang: str, user_id: int = None, date_from: str = None, date_to: str = None):
     if user_id is None:
         user_id = message.from_user.id
-    rows = get_recent_expenses(user_id, limit=10)
+    from database.db import get_expenses
+    if date_from or date_to:
+        rows = get_expenses(user_id=user_id, date_from=date_from, date_to=date_to)
+        rows = list(rows)[:10]  # limit to 10
+    else:
+        rows = get_recent_expenses(user_id, limit=10)
 
     if not rows:
         await message.answer(t(lang, "no_expenses", label="all time"))

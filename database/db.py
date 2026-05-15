@@ -122,3 +122,23 @@ def get_expense_by_id(expense_id: int, user_id: int):
     ).fetchone()
     conn.close()
     return row
+
+
+def find_expense(user_id: int, category: str = None, date: str = None, amount: float = None):
+    """Find an expense by category, date and/or amount"""
+    conn = get_connection()
+    query = "SELECT * FROM expenses WHERE user_id = ?"
+    params = [user_id]
+    if category:
+        query += " AND LOWER(category) = LOWER(?)"
+        params.append(category)
+    if date:
+        query += " AND date = ?"
+        params.append(date)
+    if amount:
+        query += " AND amount = ?"
+        params.append(amount)
+    query += " ORDER BY date DESC LIMIT 1"
+    row = conn.execute(query, params).fetchone()
+    conn.close()
+    return row
