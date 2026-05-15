@@ -142,3 +142,25 @@ def find_expense(user_id: int, category: str = None, date: str = None, amount: f
     row = conn.execute(query, params).fetchone()
     conn.close()
     return row
+
+
+def get_expense_years(user_id: int) -> list:
+    """Get distinct years that have expenses"""
+    conn = get_connection()
+    rows = conn.execute(
+        "SELECT DISTINCT strftime('%Y', date) as year FROM expenses WHERE user_id = ? ORDER BY year DESC",
+        (user_id,)
+    ).fetchall()
+    conn.close()
+    return [row["year"] for row in rows]
+
+
+def get_expense_months(user_id: int, year: str) -> list:
+    """Get distinct months for a given year"""
+    conn = get_connection()
+    rows = conn.execute(
+        "SELECT DISTINCT strftime('%m', date) as month FROM expenses WHERE user_id = ? AND strftime('%Y', date) = ? ORDER BY month ASC",
+        (user_id, year)
+    ).fetchall()
+    conn.close()
+    return [row["month"] for row in rows]
