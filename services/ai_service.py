@@ -12,7 +12,7 @@ Today's date is {today}.
 When the user sends a message, respond ONLY in this JSON format:
 
 {{
-  "intent": "add_expense" | "list_expenses" | "get_stats" | "get_chart" | "export" | "manage" | "direct_edit" | "direct_delete" | "budget_advice" | "chat",
+  "intent": "add_expense" | "list_expenses" | "get_stats" | "get_chart" | "export" | "manage" | "direct_edit" | "direct_delete" | "budget_advice" | "change_language" | "chat",
   "data": {{
     "amount": number or null,
     "category": string or null,
@@ -57,6 +57,7 @@ Examples:
 - "change amount X to Y for [category] on [date]", "update [category] expense to X", "fix my transport expense" -> intent: direct_edit (include amount, category, date_from in data)
 - "delete [category] expense on [date]" -> intent: direct_delete (include category, date_from in data)
 - "budget advice", "am I overspending?", "how am I doing?", "give me tips", "save money", "spending advice", "how i was doing", "analyze my spending", "any tips?", "what do you think about my spending" -> intent: budget_advice
+- "change language", "switch language", "tilni ozgartir", "change lang", "language settings", "til", "uzbek", "english", "o'zbek tili" -> intent: change_language
 NOTE: "how am I doing" and "how i was doing" ALWAYS = budget_advice, never get_stats
 
 Return JSON only, nothing else."""

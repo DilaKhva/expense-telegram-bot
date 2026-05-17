@@ -27,7 +27,7 @@ class TestTranslations:
     def test_uz_saved_message(self):
         result = t("uz", "saved", date="Bugun", amount="12.00", category="Food", note="tushlik")
         assert "12.00" in result
-        assert "Saqlandi" in result
+        assert "saqlandi" in result
 
     def test_all_english_keys_exist(self):
         required_keys = ["start", "cleared", "saved", "no_amount", "no_expenses",
