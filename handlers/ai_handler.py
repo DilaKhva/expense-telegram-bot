@@ -8,8 +8,8 @@ from aiogram.filters import Command
 from datetime import datetime
 
 from services.ai_service import analyze_message
-from database.db import add_expense, get_expenses, get_stats, clear_expenses, get_user_language, set_user_language, get_all_expenses_csv, find_expense, update_expense, delete_expense
-
+from database.db import add_expense, get_expenses, get_stats, clear_expenses, get_user_language, set_user_language, get_all_expenses_csv, find_expense, update_expense, delete_expense, get_user_currency, set_user_currency
+from services.currency import to_usd, from_usd, format_amount, CURRENCIES
 from utils.charts import generate_pie_chart
 from utils.translations import t
 from handlers.manage import show_manage_list
@@ -25,16 +25,16 @@ def _format_date(date_str: str) -> str:
         return date_str
 
 
-def _period_label(date_from: str, date_to: str) -> str:
+def _period_label(date_from: str, date_to: str, lang: str = "en") -> str:
     if not date_from and not date_to:
-        return "All time"
+        return "Barcha vaqt" if lang == "uz" else "All time"
     if date_from == date_to:
         return _format_date(date_from)
     if date_from and date_to:
         return f"{_format_date(date_from)} – {_format_date(date_to)}"
     if date_from:
-        return f"From {_format_date(date_from)}"
-    return f"Until {_format_date(date_to)}"
+        return ("Dan: " if lang == "uz" else "From ") + _format_date(date_from)
+    return ("Gacha: " if lang == "uz" else "Until ") + _format_date(date_to)
 
 
 def _main_keyboard(lang: str) -> InlineKeyboardMarkup:
@@ -192,14 +192,18 @@ async def ai_message_handler(message: Message):
         date = data.get("date") or None
 
         if amount and amount > 0:
+            currency = get_user_currency(user_id)
+            usd_amount = await to_usd(float(amount), currency)
             add_expense(
-                user_id=user_id, amount=float(amount),
-                category=category, note=note, date=date
+                user_id=user_id, amount=float(amount), category=category,
+                note=note, date=date,
+                original_amount=float(amount), original_currency=currency,
+                usd_amount=usd_amount
             )
             display_date = _format_date(date) if date else "Today"
+            formatted = format_amount(float(amount), currency)
             await message.answer(
-                t(lang, "saved", date=display_date, amount=f"{float(amount):,.2f}", category=category,
-                  note=note or "—"),
+                t(lang, "saved", date=display_date, amount=formatted, category=category, note=note or "—"),
                 parse_mode="Markdown"
             )
         else:
@@ -209,7 +213,7 @@ async def ai_message_handler(message: Message):
         date_from = data.get("date_from") or None
         date_to = data.get("date_to") or None
         rows = get_expenses(user_id=user_id, date_from=date_from, date_to=date_to)
-        label = _period_label(date_from, date_to)
+        label = _period_label(date_from, date_to, lang)
         if not rows:
             await message.answer(t(lang, "no_expenses", label=label), parse_mode="Markdown")
             return
@@ -225,7 +229,7 @@ async def ai_message_handler(message: Message):
         date_from = data.get("date_from") or None
         date_to = data.get("date_to") or None
         rows = get_stats(user_id=user_id, date_from=date_from, date_to=date_to)
-        label = _period_label(date_from, date_to)
+        label = _period_label(date_from, date_to, lang)
         if not rows:
             await message.answer(t(lang, "no_stats", label=label), parse_mode="Markdown")
             return
@@ -242,7 +246,7 @@ async def ai_message_handler(message: Message):
         date_from = data.get("date_from") or None
         date_to = data.get("date_to") or None
         rows = get_stats(user_id=user_id, date_from=date_from, date_to=date_to)
-        label = _period_label(date_from, date_to)
+        label = _period_label(date_from, date_to, lang)
         if not rows:
             await message.answer(t(lang, "no_chart", label=label), parse_mode="Markdown")
             return
