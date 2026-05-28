@@ -1,4 +1,5 @@
-# AI-powered Telegram bot for tracking personal expenses 💰
+# AI-powered Telegram bot for tracking 
+# personal expenses 💰
 
 An AI-powered Telegram bot for tracking personal expenses using natural language processing.  
 The application allows users to record expenses in plain English or Uzbek, analyze spending habits, generate charts, export data, and receive AI-based budget recommendations.
